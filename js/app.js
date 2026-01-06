@@ -224,6 +224,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+document.getElementById('downloadSelectedPdfs').addEventListener('click', downloadSelectedPdfs);
+
+// 文件名合法化函数
+function sanitizeFilename(str) {
+  // 移除 Windows 不允许的字符
+  return str
+    .replace(/[<>:"\/\\|?*]/g, '')     // 移除非法字符
+    .replace(/\s+/g, ' ')              // 合并多个空格
+    .trim()
+    .substring(0, 150)                 // 限制长度（避免过长）
+    .replace(/\s+$/, '')               // 去尾空格
+    || 'untitled_paper';
+}
+
+async function downloadSelectedPdfs() {
+  const selectedInputs = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (selectedInputs.length === 0) {
+    alert('Please select at least one paper to download.');
+    return;
+  }
+
+  for (const input of selectedInputs) {
+    const pdfUrl = input.dataset.pdfUrl;
+    const title = input.dataset.title;
+    const filename = sanitizeFilename(title) + '.pdf';
+
+    try {
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error(`Failed to fetch PDF: ${response.status}`);
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // URL.revokeObjectObjectURL(url);
+
+      // 可选：加个微小延迟避免触发浏览器下载拦截
+      await new Promise(r => setTimeout(r, 300));
+    } catch (error) {
+      console.error('Download failed for:', title, error);
+      alert(`Failed to download: ${title}\nError: ${error.message}`);
+    }
+  }
+
+  // 可选：下载完成后取消全选
+  selectedInputs.forEach(input => input.checked = false);
+}
 
 async function fetchGitHubStats() {
   try {
@@ -1202,7 +1254,14 @@ function renderPapers() {
     //   `;
     // }
 
-    paperCard.innerHTML = `
+    // 新增：复选框容器
+    const checkboxHTML = `
+      <label class="paper-select-checkbox">
+        <input type="checkbox" data-id="${paper.id}" data-pdf-url="${paper.url.replace('abs', 'pdf')}" data-title="${paper.title}">
+      </label>
+    `;
+
+    paperCard.innerHTML = checkboxHTML + `
       <div class="paper-card-index">${index + 1}</div>
       ${paper.isMatched ? '<div class="match-badge" title="匹配您的搜索条件"></div>' : ''}
       <div class="paper-card-header">
@@ -1227,7 +1286,12 @@ function renderPapers() {
       currentPaperIndex = index; // 记录当前点击的论文索引
       showPaperDetails(paper, index + 1);
     });
-    
+    const checkbox = paperCard.querySelector('input[type="checkbox"]');
+    if (checkbox) {
+      checkbox.addEventListener('click', (e) => {
+        e.stopPropagation(); // 关键：阻止冒泡到 paperCard
+      });
+    }
     container.appendChild(paperCard);
   });
 }

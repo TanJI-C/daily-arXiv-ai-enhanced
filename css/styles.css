@@ -2326,3 +2326,36 @@ footer {
   display: flex;
   align-items: center;
 }
+
+.paper-select-checkbox {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.paper-select-checkbox input {
+  margin: 0;
+  transform: scale(1.1);
+}
+
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  background-color: var(--background-hover);
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  white-space: nowrap;
+  margin: 0 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
