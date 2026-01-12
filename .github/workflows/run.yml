@@ -67,6 +67,7 @@ jobs:
         
         export EMAIL_ACCOUNT=${{ secrets.EMAIL_ACCOUNT }}
         export EMAIL_APP_PASSWORD=${{ secrets.EMAIL_APP_PASSWORD }}
+        export SERP_API_KEY=${{ secrets.SERP_API_KEY }}
         
         python google_scholar/fetch_emails.py "data/${today}.jsonl"
         
