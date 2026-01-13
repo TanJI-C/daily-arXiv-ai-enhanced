@@ -1410,6 +1410,22 @@ function showPaperDetails(paper, paperIndex) {
   document.getElementById('pdfLink').href = paper.url.replace('abs', 'pdf');
   document.getElementById('htmlLink').href = paper.url.replace('abs', 'html');
   
+  // --- Google Scholar Button Logic ---
+  // 自动提取论文标题构建Google Scholar搜索链接
+  const googleScholarLink = document.getElementById('googleScholarLink');
+  if (googleScholarLink) {
+    if (paper.title) {
+      // 使用encodeURIComponent确保特殊字符被正确编码
+      googleScholarLink.href = `https://scholar.google.com/scholar?q=${encodeURIComponent(paper.title)}`;
+      googleScholarLink.style.display = ''; // 确保按钮显示
+    } else {
+      // 如果无法获取标题，隐藏按钮或提供错误提示
+      googleScholarLink.style.display = 'none';
+      console.warn('Paper title is missing, Google Scholar button hidden.');
+    }
+  }
+  // -----------------------------------
+
   // --- GitHub Button Logic ---
   const githubLink = document.getElementById('githubLink');
   
