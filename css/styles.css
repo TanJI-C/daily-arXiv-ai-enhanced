@@ -1690,8 +1690,6 @@ footer {
   text-transform: none;
 }
 
-  padding-left: 3px; /* 减少左侧内边距 */
-}
 
 
 .author-tag {
@@ -1813,6 +1811,25 @@ footer {
   width: 12px;
   height: 12px;
   border-radius: 2px;
+}
+
+/* 作者链接样式 */
+.author-link {
+  color: var(--text-color);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--text-tertiary);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.author-link:hover {
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--primary-color);
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.author-link:active {
+  opacity: 0.8;
 }
 
 /* 匹配论文卡片的高亮样式 */

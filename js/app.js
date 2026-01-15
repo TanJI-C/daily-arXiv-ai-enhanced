@@ -1329,9 +1329,25 @@ function showPaperDetails(paper, paperIndex) {
   const modalAuthorTerms = [];
   if (activeAuthors.length > 0) modalAuthorTerms.push(...activeAuthors);
   if (textSearchQuery && textSearchQuery.trim().length > 0) modalAuthorTerms.push(textSearchQuery.trim());
-  const highlightedAuthors = modalAuthorTerms.length > 0 
-    ? highlightMatches(paper.authors, modalAuthorTerms, 'author-highlight') 
-    : paper.authors;
+  
+  // 生成带链接的作者列表
+  let highlightedAuthors = paper.authors;
+  if (paper.authors) {
+    const authorsList = paper.authors.split(',').map(a => a.trim());
+    highlightedAuthors = authorsList.map(author => {
+      // 1. 生成 Google Scholar 链接 (空格转+)
+      const query = author.replace(/\s+/g, '+');
+      const url = `https://scholar.google.com/scholar?q=${query}`;
+      
+      // 2. 高亮匹配的作者名
+      const highlightedName = modalAuthorTerms.length > 0 
+        ? highlightMatches(author, modalAuthorTerms, 'author-highlight') 
+        : author;
+      
+      // 3. 返回超链接格式
+      return `<a href="${url}" target="_blank" class="author-link">${highlightedName}</a>`;
+    }).join(', ');
+  }
   
   // 高亮摘要（关键词 + 文本搜索）
   const highlightedSummary = modalTitleTerms.length > 0 
